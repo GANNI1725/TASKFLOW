@@ -6,7 +6,6 @@ import TrustedBy from '../components/landing/TrustedBy';
 import Features from '../components/landing/Features';
 import About from '../components/landing/About';
 import Pricing from '../components/landing/Pricing';
-import DemoSection from '../components/landing/DemoSection';
 import { Button } from '../components/ui/Button';
 
 export default function LandingPage() {
@@ -32,7 +31,6 @@ export default function LandingPage() {
         <Features />
         <About />
         <Pricing />
-        <DemoSection />
       </main>
 
       <footer className="border-t py-12 px-8 text-center text-muted-foreground">
