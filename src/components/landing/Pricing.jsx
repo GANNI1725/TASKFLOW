@@ -1,0 +1,140 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { CheckCircle, Crown, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/Button';
+import { useToast } from '../../hooks/useToast';
+import { cn } from '../../utils/cn';
+
+const plans = [
+  {
+    name: 'Guest (Current)',
+    price: '0',
+    description: 'Perfect for quick testing.',
+    features: ['2 Active Tasks', 'Basic Task Tracking', 'Local Persistence'],
+    buttonText: 'Current Plan',
+    highlight: false,
+    gold: false,
+    current: true
+  },
+  {
+    name: 'Starter',
+    price: '299',
+    description: 'Designed for individual productivity.',
+    features: ['20 Active Tasks', '3 Active Projects', 'Mobile Sync', 'Community Forum'],
+    buttonText: 'Buy Plan',
+    highlight: false,
+    gold: false
+  },
+  {
+    name: 'Professional',
+    price: '1,499',
+    description: 'Built for collaborative teams.',
+    features: ['Unlimited Tasks', 'Unlimited Projects', 'Workflow Automation', 'Shared Workspaces'],
+    buttonText: 'Buy Plan',
+    highlight: true,
+    gold: false
+  },
+  {
+    name: 'Enterprise',
+    price: '4,999',
+    description: 'Tailored for large-scale operations.',
+    features: ['Everything in Pro', 'Dedicated Account Manager', 'Custom Data Integrations', 'SAML & SSO Support'],
+    buttonText: 'Buy Plan',
+    highlight: false,
+    gold: true
+  }
+];
+
+export default function Pricing() {
+  const { addToast } = useToast();
+  const navigate = useNavigate();
+
+  const handlePlanSelection = (plan) => {
+    if (plan.current) {
+        addToast('You are already using the Guest plan!', 'info');
+        return;
+    }
+    addToast('Please login to continue with your subscription.', 'info');
+    setTimeout(() => navigate('/login'), 1000);
+  };
+
+  return (
+    <section id="pricing" className="py-20 scroll-mt-20">
+      <div className="max-w-7xl mx-auto px-8 space-y-12">
+        <div className="text-center space-y-4">
+          <h2 className="text-4xl font-bold">Simple, transparent pricing</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Plans built to help your team stay focused and organized.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+          {plans.map((plan, i) => (
+            <motion.div 
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={cn(
+                "p-8 rounded-[2rem] border flex flex-col space-y-6 transition-all hover:shadow-xl relative",
+                plan.highlight 
+                  ? "bg-primary text-primary-foreground border-primary shadow-xl shadow-primary/20 scale-105 z-10" 
+                  : plan.gold 
+                    ? "bg-gradient-to-b from-[#fbf3d4] to-[#e6c17a] text-black border-[#d4af37] shadow-lg"
+                    : plan.current
+                      ? "bg-secondary border-dashed border-primary"
+                      : "bg-card text-foreground border-border"
+              )}
+            >
+              {plan.gold && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#d4af37] text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1 uppercase tracking-wider">
+                  <Crown size={14} /> Recommended
+                </div>
+              )}
+              <div>
+                <p className={cn("text-xs uppercase tracking-widest font-bold mb-2 flex items-center gap-2", 
+                  plan.highlight ? "opacity-80" : plan.gold ? "text-[#8b6508]" : "text-primary")}>
+                  {plan.current && <User size={14}/>} {plan.name}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl font-bold">NPR</span>
+                  <h3 className="text-4xl font-bold">{plan.price}</h3>
+                  <span className={cn("text-xs font-medium", plan.highlight ? "opacity-60" : plan.gold ? "text-black/60" : "text-muted-foreground")}>/mo</span>
+                </div>
+                <p className={cn("mt-3 text-xs leading-relaxed", plan.highlight ? "opacity-80" : plan.gold ? "text-black/70" : "text-muted-foreground")}>
+                  {plan.description}
+                </p>
+              </div>
+
+              <ul className="flex-1 space-y-3">
+                {plan.features.map(feature => (
+                  <li key={feature} className="flex items-center gap-3 text-xs font-medium">
+                    <CheckCircle size={16} className={plan.highlight ? "text-primary-foreground" : plan.gold ? "text-[#8b6508]" : "text-primary"} />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <Button 
+                size="lg" 
+                onClick={() => handlePlanSelection(plan)}
+                className={cn(
+                  "w-full h-12 text-md font-bold transition-all",
+                  plan.highlight 
+                    ? "bg-background text-foreground hover:bg-background/90" 
+                    : plan.gold
+                      ? "bg-black text-white hover:bg-black/90"
+                      : plan.current
+                        ? "bg-primary/20 text-primary hover:bg-primary/30"
+                        : "bg-primary text-primary-foreground hover:bg-primary/90"
+                )}
+              >
+                {plan.buttonText}
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
